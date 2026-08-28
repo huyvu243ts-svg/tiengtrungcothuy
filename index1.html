@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIẾNG TRUNG CÔ THỦY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.75)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white/95 backdrop-blur shadow-sm py-4 sticky top-0 z-50 border-b border-emerald-100">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+                <h1 class="text-xl font-bold text-emerald-700 flex items-center gap-2">
+                    <span>🇨🇳</span> <span class="tracking-wide font-black">TIẾNG TRUNG CÔ THỦY</span>
+                </h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="checkAdminPassword()" id="authBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+                    <span>🔒</span> Chế độ chỉnh sửa
+                </button>
+                <button onclick="goHome()" class="text-sm font-medium text-slate-600 hover:text-emerald-700 transition">Trang chủ</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- KHUNG CHỈNH SỬA TOÀN MÀN HÌNH (QUẢN LÝ, THÊM, SỬA, XÓA DỮ LIỆU) -->
+        <div id="masterAdminPanel" class="bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl mb-8 border border-emerald-200 hidden">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-xl font-bold text-emerald-700 flex items-center gap-2">
+                    <span>🔓</span> Bảng Chỉnh Sửa & Quản Lý Dữ Liệu Hệ Thống
+                </h3>
+                <button onclick="checkAdminPassword()" class="text-slate-400 hover:text-rose-600 font-bold text-sm">✕ Đóng chỉnh sửa</button>
+            </div>
+
+            <!-- Các tab chuyển đổi quản lý -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <button onclick="switchAdminTab('vocab')" id="adminTabVocab" class="py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md">
+                    📖 Từ Mới
+                </button>
+                <button onclick="switchAdminTab('grammar')" id="adminTabGrammar" class="py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50">
+                    ✍️ Ngữ Pháp
+                </button>
+                <button onclick="switchAdminTab('exercise')" id="adminTabExercise" class="py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50">
+                    📝 Bài Tập
+                </button>
+                <button onclick="switchAdminTab('quiz')" id="adminTabQuiz" class="py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50">
+                    🎯 Kiểm Tra Từ
+                </button>
+            </div>
+
+            <!-- TAB 1: QUẢN LÝ TỪ MỚI -->
+            <div id="adminFormVocab" class="space-y-6">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">➕ Thêm / Cập Nhật Từ Mới</h4>
+                    <input type="hidden" id="editVocabIndex" value="-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cấp độ HSK</label>
+                            <select id="addVocabHskLevel" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                                <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option><option value="7-9">HSK 7-9</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Từ loại</label>
+                            <input type="text" id="addT" placeholder="Ví dụ: Danh từ, Động từ..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Hán tự</label>
+                            <input type="text" id="addW" placeholder="Nhập Hán tự..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Pinyin</label>
+                            <input type="text" id="addP" placeholder="Nhập Pinyin..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nghĩa tiếng Việt</label>
+                            <input type="text" id="addM" placeholder="Nhập nghĩa..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="saveVocabItem()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-semibold transition shadow-md">Lưu Từ Mới</button>
+                        <button onclick="resetVocabForm()" id="cancelVocabEditBtn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-semibold transition">Hủy sửa</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4">📋 Danh Sách Từ Mới Đã Thêm</h4>
+                    <div id="adminVocabListContainer" class="space-y-2 max-h-80 overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+
+            <!-- TAB 2: QUẢN LÝ NGỮ PHÁP -->
+            <div id="adminFormGrammar" class="space-y-6 hidden">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">➕ Thêm / Cập Nhật Ngữ Pháp</h4>
+                    <input type="hidden" id="editGrammarIndex" value="-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cấp độ HSK</label>
+                            <select id="addGrammarHskLevel" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                                <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option><option value="7-9">HSK 7-9</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tiêu đề cấu trúc</label>
+                            <input type="text" id="addGTitle" placeholder="Ví dụ: Cấu trúc so sánh..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Mô tả cách dùng</label>
+                        <textarea id="addGDesc" placeholder="Nhập mô tả chi tiết..." rows="4" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Ví dụ minh họa</label>
+                        <input type="text" id="addGEx" placeholder="Nhập ví dụ..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="saveGrammarItem()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-semibold transition shadow-md">Lưu Ngữ Pháp</button>
+                        <button onclick="resetGrammarForm()" id="cancelGrammarEditBtn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-semibold transition">Hủy sửa</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4">📋 Danh Sách Ngữ Pháp Đã Thêm</h4>
+                    <div id="adminGrammarListContainer" class="space-y-2 max-h-80 overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: QUẢN LÝ BÀI TẬP -->
+            <div id="adminFormExercise" class="space-y-6 hidden">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">➕ Thêm / Cập Nhật Bài Tập 10 Câu</h4>
+                    <input type="hidden" id="editExKey" value="">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Dạng bài tập</label>
+                            <select id="addExType" class="w-full border rounded-xl px-3.5 py-2.5 text-sm font-medium text-emerald-700 bg-white">
+                                <option value="sapxep">Sắp xếp câu</option>
+                                <option value="dientu">Điền từ vào chỗ trống</option>
+                                <option value="dichcau">Dịch câu sang tiếng Trung</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cấp độ HSK</label>
+                            <select id="addHskLevel" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                                <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option><option value="7-9">HSK 7-9</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tên bài tập</label>
+                            <input type="text" id="addExTitle" placeholder="Ví dụ: Bài ôn tập số 1" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nhập 10 dòng nội dung (1 câu/dòng):</label>
+                            <textarea id="addExContent10" placeholder="1. Câu 1...&#10;2. Câu 2..." rows="6" class="w-full border rounded-xl p-3 text-xs font-mono bg-white"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nhập 10 đáp án tương ứng (1 đáp án/dòng):</label>
+                            <textarea id="addExAnswers10" placeholder="1. Đáp án 1...&#10;2. Đáp án 2..." rows="6" class="w-full border rounded-xl p-3 text-xs font-mono bg-white"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Gợi ý đáp án / Cấu trúc câu / Từ mới liên quan:</label>
+                        <textarea id="addExHint" placeholder="Nhập gợi ý để học viên tham khảo khi làm bài..." rows="3" class="w-full border rounded-xl p-3 text-sm bg-white"></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="saveExerciseItem()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-semibold transition shadow-md">Lưu Bài Tập</button>
+                        <button onclick="resetExerciseForm()" id="cancelExEditBtn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-semibold transition">Hủy sửa</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4">📋 Danh Sách Bài Tập Đã Thêm</h4>
+                    <div id="adminExerciseListContainer" class="space-y-2 max-h-80 overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: QUẢN LÝ KIỂM TRA TỪ (MỚI) -->
+            <div id="adminFormQuiz" class="space-y-6 hidden">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4 flex items-center gap-2">➕ Thêm / Cập Nhật Từ Kiểm Tra</h4>
+                    <input type="hidden" id="editQuizIndex" value="-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cấp độ HSK</label>
+                            <select id="addQuizHskLevel" class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                                <option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option><option value="4">HSK 4</option><option value="5">HSK 5</option><option value="6">HSK 6</option><option value="7-9">HSK 7-9</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Từ loại</label>
+                            <input type="text" id="addQuizType" placeholder="Ví dụ: Danh từ, Động từ..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nghĩa tiếng Việt</label>
+                            <input type="text" id="addQuizMeaning" placeholder="Nhập nghĩa tiếng Việt..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đáp án (Tiếng Trung / Hán tự)</label>
+                            <input type="text" id="addQuizWord" placeholder="Nhập chữ Hán..." class="w-full border rounded-xl px-3.5 py-2.5 text-sm bg-white">
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="saveQuizItem()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-semibold transition shadow-md">Lưu Từ Kiểm Tra</button>
+                        <button onclick="resetQuizForm()" id="cancelQuizEditBtn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-semibold transition">Hủy sửa</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <h4 class="font-bold text-base text-slate-800 mb-4">📋 Danh Sách Từ Kiểm Tra Đã Thêm</h4>
+                    <div id="adminQuizListContainer" class="space-y-2 max-h-80 overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANG CHỦ -->
+        <div id="homeSection">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-white mb-2 drop-shadow">Chào mừng bạn đến với góc học tập!</h2>
+                <p class="text-emerald-100 text-sm drop-shadow">Chọn một chuyên mục bên dưới để bắt đầu học tập theo các cấp độ HSK.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Ô Từ mới -->
+                <div onclick="openLevelMenu('vocab')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-3">📖</div>
+                    <h3 class="text-xl font-bold text-emerald-700 mb-1">Từ mới</h3>
+                    <p class="text-sm text-slate-500">Danh sách từ vựng chuẩn HSK phân chia theo từng cấp độ.</p>
+                </div>
+
+                <!-- Ô Ngữ pháp -->
+                <div onclick="openLevelMenu('grammar')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-3">✍️</div>
+                    <h3 class="text-xl font-bold text-emerald-700 mb-1">Ngữ pháp</h3>
+                    <p class="text-sm text-slate-500">Cấu trúc câu và ví dụ thực tế theo các cấp độ HSK.</p>
+                </div>
+
+                <!-- Ô Bài tập -->
+                <div onclick="openLevelMenu('exercise')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-3">📝</div>
+                    <h3 class="text-xl font-bold text-emerald-700 mb-1">Bài tập</h3>
+                    <p class="text-sm text-slate-500">Sắp xếp câu, điền từ vào chỗ trống, dịch câu 10 câu có chấm điểm đúng sai và gợi ý.</p>
+                </div>
+
+                <!-- Ô Kiểm tra từ -->
+                <div onclick="openLevelMenu('quiz')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🎯</div>
+                    <h3 class="text-xl font-bold text-emerald-700 mb-1">Kiểm tra từ</h3>
+                    <p class="text-sm text-slate-500">Đọc nghĩa tiếng Việt và từ loại, gõ lại chữ Hán tương ứng theo cấp độ HSK.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANG MENU CHỌN CẤP ĐỘ HSK -->
+        <div id="levelMenuSection" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <button onclick="goBack()" class="bg-white/90 hover:bg-white text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">⬅ Quay lại</button>
+                    <button onclick="goHome()" class="bg-white/90 hover:bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-slate-200 shadow-sm">🏠 Trang chủ</button>
+                </div>
+                <h2 id="levelMenuTitle" class="text-xl font-bold text-white text-right drop-shadow">Chọn Cấp Độ HSK</h2>
+            </div>
+            <p id="levelMenuDesc" class="text-emerald-100 mb-6 text-center drop-shadow">Hãy chọn cấp độ HSK bạn muốn xem:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="levelGridContainer"></div>
+        </div>
+
+        <!-- TRANG MENU CHỌN DẠNG BÀI TẬP -->
+        <div id="exerciseTypeMenuSection" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <button onclick="goBack()" class="bg-white/90 hover:bg-white text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">⬅ Quay lại</button>
+                    <button onclick="goHome()" class="bg-white/90 hover:bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-slate-200 shadow-sm">🏠 Trang chủ</button>
+                </div>
+                <h2 id="exTypeMenuTitle" class="text-xl font-bold text-white text-right drop-shadow">Chọn Dạng Bài Tập</h2>
+            </div>
+            <p class="text-emerald-100 mb-6 text-center drop-shadow">Chọn dạng bài tập bạn muốn luyện tập cho cấp độ này:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div onclick="openExerciseList('sapxep')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 text-center transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-2">🔀</div>
+                    <h3 class="text-lg font-bold text-emerald-700 mb-1">Sắp xếp câu</h3>
+                    <p class="text-xs text-slate-500">Sắp xếp các từ xáo trộn thành câu hoàn chỉnh.</p>
+                </div>
+                <div onclick="openExerciseList('dientu')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 text-center transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-2">✍️</div>
+                    <h3 class="text-lg font-bold text-emerald-700 mb-1">Điền từ vào chỗ trống</h3>
+                    <p class="text-xs text-slate-500">Điền từ vựng thích hợp vào câu.</p>
+                </div>
+                <div onclick="openExerciseList('dichcau')" class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer border border-emerald-100 hover:border-emerald-500 text-center transition transform hover:-translate-y-1">
+                    <div class="text-3xl mb-2">🌐</div>
+                    <h3 class="text-lg font-bold text-emerald-700 mb-1">Dịch câu sang tiếng Trung</h3>
+                    <p class="text-xs text-slate-500">Dịch câu từ tiếng Việt sang Hán tự chính xác.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANG HIỂN THỊ NỘI DUNG CHI TIẾT -->
+        <div id="contentDetailSection" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <button onclick="goBack()" class="bg-white/90 hover:bg-white text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">⬅ Quay lại</button>
+                    <button onclick="goHome()" class="bg-white/90 hover:bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-slate-200 shadow-sm">🏠 Trang chủ</button>
+                </div>
+                <h2 id="contentDetailTitle" class="text-xl font-bold text-white text-right drop-shadow">Chi Tiết</h2>
+            </div>
+            <div id="contentDetailContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- TRANG GIAO DIỆN LÀM QUIZ KIỂM TRA TỪ -->
+        <div id="quizPlaySection" class="hidden">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    <button onclick="goBack()" class="bg-white/90 hover:bg-white text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-emerald-200 shadow-sm">⬅ Quay lại</button>
+                    <button onclick="goHome()" class="bg-white/90 hover:bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 border border-slate-200 shadow-sm">🏠 Trang chủ</button>
+                </div>
+                <h2 id="quizPlayTitle" class="text-xl font-bold text-white text-right drop-shadow">🎯 Kiểm Tra Từ</h2>
+            </div>
+            <div class="bg-white/95 backdrop-blur rounded-2xl shadow-xl p-6 max-w-xl mx-auto text-center border border-emerald-100">
+                <p class="text-slate-500 text-sm mb-2">Đọc nghĩa tiếng Việt, từ loại và gõ chính xác Hán tự tương ứng:</p>
+                <div id="quizMeaning" class="text-2xl sm:text-3xl font-bold text-emerald-700 mb-6 bg-emerald-50 py-4 px-4 rounded-xl border border-emerald-100"></div>
+                <input type="text" id="quizInput" placeholder="Nhập Hán tự tại đây..." class="w-full border-2 border-slate-200 rounded-xl px-4 py-3 text-center text-xl mb-4 focus:outline-none transition" oninput="checkQuizInput(this)">
+                <div class="flex justify-between items-center text-sm text-slate-500">
+                    <span id="quizScore">Điểm đúng: 0</span>
+                    <button onclick="nextQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-medium transition">Từ tiếp theo ➡</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Xử lý -->
+    <script>
+        let isEditable = false;
+
+        let vocabData = [
+            { level: "1", word: "我", pinyin: "wǒ", meaning: "Tôi, ta", type: "Đại từ" },
+            { level: "1", word: "你", pinyin: "nǐ", meaning: "Bạn, anh, chị", type: "Đại từ" },
+            { level: "1", word: "好", pinyin: "hǎo", meaning: "Tốt, đẹp, khỏe", type: "Tính từ" },
+            { level: "2", word: "买", pinyin: "mǎi", meaning: "Mua", type: "Động từ" },
+            { level: "2", word: "工作", pinyin: "gōngzuò", meaning: "Công việc, làm việc", type: "Động từ/Danh từ" },
+            { level: "3", word: "公司", pinyin: "gōngsī", meaning: "Công ty", type: "Danh từ" },
+            { level: "4", word: "经验", pinyin: "jīngyàn", meaning: "Kinh nghiệm", type: "Danh từ" },
+            { level: "5", word: "遗憾", pinyin: "yíhàn", meaning: "Đáng tiếc, hối tiếc", type: "Tính từ" },
+            { level: "6", word: "傲慢", pinyin: "àomàn", meaning: "Kiêu ngạo, ngạo mạn", type: "Tính từ" },
+            { level: "7-9", word: "渊博", pinyin: "yuānbó", meaning: "Uyên bác (kiến thức)", type: "Tính từ" }
+        ];
+
+        let quizData = [
+            { level: "1", word: "我", meaning: "Tôi, ta", type: "Đại từ" },
+            { level: "1", word: "你", meaning: "Bạn, anh, chị", type: "Đại từ" },
+            { level: "1", word: "好", meaning: "Tốt, đẹp, khỏe", type: "Tính từ" },
+            { level: "2", word: "买", meaning: "Mua", type: "Động từ" },
+            { level: "2", word: "工作", meaning: "Công việc, làm việc", type: "Động từ/Danh từ" },
+            { level: "3", word: "公司", meaning: "Công ty", type: "Danh từ" },
+            { level: "4", word: "经验", meaning: "Kinh nghiệm", type: "Danh từ" },
+            { level: "5", word: "遗憾", meaning: "Đáng tiếc, hối tiếc", type: "Tính từ" },
+            { level: "6", word: "傲慢", meaning: "Kiêu ngạo, ngạo mạn", type: "Tính từ" },
+            { level: "7-9", word: "渊博", meaning: "Uyên bác (kiến thức)", type: "Tính từ" }
+        ];
+
+        let grammarData = [
+            { level: "1", title: "Cấu trúc câu hỏi với 吗 (ma)", desc: "Dùng để tạo câu hỏi Yes/No ở cuối câu khẳng định.\nVí dụ sử dụng trong hội thoại hằng ngày.", example: "你是中国人吗？ (Bạn là người Trung Quốc phải không?)" },
+            { level: "2", title: "Cấu trúc biểu thị mức độ 太...了", desc: "Dùng 太 + tính từ + 了 để biểu thị mức độ quá, lắm.", example: "天气 很好 -> 太好了 (Tuyệt quá!)." },
+            { level: "3", title: "Cấu trúc so sánh với 比", desc: "Dùng A + 比 + B + tính từ để so sánh hơn.", example: "他比我高 (Anh ấy cao hơn tôi)." },
+            { level: "4", title: "Cấu trúc liên từ 虽然...但是...", desc: "Mặc dù... nhưng...\nDùng trong câu phức biểu thị ý nhượng bộ.", example: "虽然累，但是很高兴 (Mặc dù mệt nhưng rất vui)." },
+            { level: "5", title: "Cấu trúc nhấn mạnh 连...也/都...", desc: "Dùng để nhấn mạnh sự việc đến mức cực đoan.", example: "他连 汉字也不会写 (Chữ Hán anh ấy còn không viết được)." },
+            { level: "6", title: "Cấu trúc ngữ pháp học thuật cao cấp", desc: "Sử dụng các thành ngữ và ngữ pháp cổ điển.", example: "..." },
+            { level: "7-9", title: "Cấu trúc văn bản chuyên sâu HSK 7-9", desc: "Tổng hợp biểu đạt học thuật chuyên ngành.", example: "..." }
+        ];
+
+        let exerciseData = {
+            "4": {
+                "sapxep": {
+                    title: "Bài tập sắp xếp câu HSK 4",
+                    lines: [
+                        "1. 昨天 / 我 / 去了 / 医院 / 朋友 / 看",
+                        "2. 汉语 / 学习 / 坚持 / 每天 / 应该 / 我们",
+                        "3. 飞机 / 票 / 已经 / 买了 / 我 / 呢",
+                        "4. 觉得 / 电影 / 这个 / 非常 / 有意思 / 我",
+                        "5. 老师 / 问 / 问题 / A / 回答 / 学生",
+                        "6. 喜欢 / 红色 / 的 / 那个 / 裙子 / 我",
+                        "7. 考试 / 顺利 / 祝 / 你 / 取得 / 成绩 / 好",
+                        "8. 咖啡 / 杯 / 这 / 一 / 喝 / 很好",
+                        "9. 周末 / 打算 / 游 / 旅游 / 去 / 哪儿 / 你",
+                        "10. 努力 / 工作 / 为了 / 生活 / 更好 / 的"
+                    ],
+                    answers: [
+                        "我昨天去医院看朋友",
+                        "我们应该应该坚持学习汉语",
+                        "我已经买好飞机票了",
+                        "我觉得这个电影非常有意思",
+                        "老师问学生问题",
+                        "我喜欢那个红色的裙子",
+                        "祝你考试顺利取得好成绩",
+                        "这一杯咖啡很好喝",
+                        "周末你打算去哪儿旅游",
+                        "为了过更好的生活努力工作"
+                    ],
+                    hint: "Gợi ý: Nhớ lại cấu trúc câu chủ ngữ + trạng ngữ chỉ thời gian + địa điểm + động từ + tân ngữ."
+                },
+                "dientu": {
+                    title: "Bài tập điền từ vào chỗ trống HSK 4",
+                    lines: [
+                        "1. 经理，关于这次合作，我们已经谈得____了。",
+                        "2. 虽然工作很累，但是他觉得很有____。",
+                        "3. 这家饭馆的____一直特别不错，很多人排队。",
+                        "4. 我们绝对不能遇到困难就轻易____。",
+                        "5. 这件衣服款式很好，____颜色稍微深了点。",
+                        "6. 电脑又死机了，快找个____来检查一下。",
+                        "7. 公司决定下周一开始实行新的考勤____。",
+                        "8. 年轻人常常感到工作带来的巨大____。",
+                        "9. 成功, 纯凭运气是走不____的。",
+                        "10. 专家们终于找出了导致污染的根本____。"
+                    ],
+                    answers: [
+                        "差不多",
+                        "意义",
+                        "生意",
+                        "放弃",
+                        "可是",
+                        "工程师",
+                        "制度",
+                        "压力",
+                        "远",
+                        "原因"
+                    ],
+                    hint: "Gợi ý: Ôn lại từ vựng HSK 4 về các chủ đề công sở, đời sống và tính từ chỉ trạng thái."
+                },
+                "dichcau": {
+                    title: "Bài tập dịch câu sang tiếng Trung HSK 4",
+                    lines: [
+                        "1. Mặc dù thời tiết rất lạnh, anh ấy vẫn đi chạy bộ.",
+                        "2. Cuộc họp chiều nay được hoãn lại đến ngày mai.",
+                        "3. Bạn có thể giúp tôi một việc được không?",
+                        "4. Thành phố này thay đổi nhanh quá.",
+                        "5. Cô ấy là một giáo viên rất có kinh nghiệm.",
+                        "6. Tôi quên mang theo điện thoại di động rồi.",
+                        "7. Chúng ta nên hoàn thành nhiệm vụ này trước thứ Sáu.",
+                        "8. Tiếng Trung của cô ấy tiến bộ rất nhiều.",
+                        "9. Cảm ơn bạn đã giúp đỡ tôi trong thời gian qua.",
+                        "10. Hãy tin tưởng vào chính mình."
+                    ],
+                    answers: [
+                        "虽然天气很冷，他还是去跑步",
+                        "今天下午的会议推迟到明天了",
+                        "你可以帮我一个忙吗",
+                        "这个城市变化太快了",
+                        "她是一个非常有经验的老师",
+                        "我忘记带手机了",
+                        "我们应该在周五之前完成这个任务",
+                        "她的汉语进步了很多",
+                        "谢谢你这段时间对我的帮助",
+                        "请相信你自己"
+                    ],
+                    hint: "Gợi ý: Sử dụng cấu trúc liên từ 虽然...但是... và các bổ ngữ trình độ phù hợp."
+                }
+            }
+        };
+
+        let currentSectionType = ""; 
+        let currentSelectedLevel = "1";
+        let currentExSubtype = "sapxep";
+
+        function checkAdminPassword() {
+            if (isEditable) {
+                isEditable = false;
+                document.getElementById('authBtn').innerText = "🔒 Chế độ chỉnh sửa";
+                document.getElementById('authBtn').className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm flex items-center gap-1.5";
+                document.getElementById('masterAdminPanel').classList.add('hidden');
+                goHome();
+                return;
+            }
+
+            let pass = prompt("Nhập mật khẩu để chỉnh sửa:");
+            if (pass === "tiengtrungcothuy") {
+                isEditable = true;
+                document.getElementById('authBtn').innerText = "🔓 Thoát chế độ chỉnh sửa";
+                document.getElementById('authBtn').className = "bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-semibold transition shadow-sm flex items-center gap-1.5";
+                
+                document.getElementById('homeSection').classList.add('hidden');
+                document.getElementById('levelMenuSection').classList.add('hidden');
+                document.getElementById('exerciseTypeMenuSection').classList.add('hidden');
+                document.getElementById('contentDetailSection').classList.add('hidden');
+                document.getElementById('quizPlaySection').classList.add('hidden');
+                
+                document.getElementById('masterAdminPanel').classList.remove('hidden');
+                switchAdminTab('vocab');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pass !== null) {
+                alert("Mật khẩu không đúng!");
+            }
+        }
+
+        function switchAdminTab(tabName) {
+            document.getElementById('adminFormVocab').classList.add('hidden');
+            document.getElementById('adminFormGrammar').classList.add('hidden');
+            document.getElementById('adminFormExercise').classList.add('hidden');
+            document.getElementById('adminFormQuiz').classList.add('hidden');
+
+            document.getElementById('adminTabVocab').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50";
+            document.getElementById('adminTabGrammar').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50";
+            document.getElementById('adminTabExercise').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50";
+            document.getElementById('adminTabQuiz').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50";
+
+            if (tabName === 'vocab') {
+                document.getElementById('adminFormVocab').classList.remove('hidden');
+                document.getElementById('adminTabVocab').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md";
+                renderAdminVocabList();
+            } else if (tabName === 'grammar') {
+                document.getElementById('adminFormGrammar').classList.remove('hidden');
+                document.getElementById('adminTabGrammar').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md";
+                renderAdminGrammarList();
+            } else if (tabName === 'exercise') {
+                document.getElementById('adminFormExercise').classList.remove('hidden');
+                document.getElementById('adminTabExercise').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md";
+                renderAdminExerciseList();
+            } else if (tabName === 'quiz') {
+                document.getElementById('adminFormQuiz').classList.remove('hidden');
+                document.getElementById('adminTabQuiz').className = "py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition border flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md";
+                renderAdminQuizList();
+            }
+        }
+
+        // CRUD TỪ MỚI
+        function saveVocabItem() {
+            let index = parseInt(document.getElementById('editVocabIndex').value);
+            let level = document.getElementById('addVocabHskLevel').value;
+            let type = document.getElementById('addT').value.trim();
+            let word = document.getElementById('addW').value.trim();
+            let pinyin = document.getElementById('addP').value.trim();
+            let meaning = document.getElementById('addM').value.trim();
+
+            if (!word || !meaning) {
+                alert("Vui lòng nhập đầy đủ Hán tự và Nghĩa tiếng Việt!");
+                return;
+            }
+
+            let newItem = { level, word, pinyin, meaning, type };
+            if (index === -1) {
+                vocabData.push(newItem);
+            } else {
+                vocabData[index] = newItem;
+                resetVocabForm();
+            }
+
+            document.getElementById('addW').value = '';
+            document.getElementById('addP').value = '';
+            document.getElementById('addM').value = '';
+            document.getElementById('addT').value = '';
+            renderAdminVocabList();
+            alert("Đã lưu từ mới thành công!");
+        }
+
+        function renderAdminVocabList() {
+            let container = document.getElementById('adminVocabListContainer');
+            container.innerHTML = '';
+            if (vocabData.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">Chưa có từ mới nào.</p>';
+                return;
+            }
+            vocabData.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <span class="font-bold text-emerald-700">[HSK ${item.level}]</span> 
+                            <span class="font-bold text-sm mx-1">${item.word}</span> 
+                            <span class="text-slate-500">(${item.pinyin})</span> - ${item.meaning} <span class="text-slate-400">[${item.type}]</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editVocab(${idx})" class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-amber-200 transition">Sửa</button>
+                            <button onclick="deleteVocab(${idx})" class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-rose-200 transition">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function editVocab(idx) {
+            let item = vocabData[idx];
+            document.getElementById('editVocabIndex').value = idx;
+            document.getElementById('addVocabHskLevel').value = item.level;
+            document.getElementById('addT').value = item.type || '';
+            document.getElementById('addW').value = item.word;
+            document.getElementById('addP').value = item.pinyin;
+            document.getElementById('addM').value = item.meaning;
+            document.getElementById('cancelVocabEditBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetVocabForm() {
+            document.getElementById('editVocabIndex').value = '-1';
+            document.getElementById('addW').value = '';
+            document.getElementById('addP').value = '';
+            document.getElementById('addM').value = '';
+            document.getElementById('addT').value = '';
+            document.getElementById('cancelVocabEditBtn').classList.add('hidden');
+        }
+
+        function deleteVocab(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa từ này không?")) {
+                vocabData.splice(idx, 1);
+                renderAdminVocabList();
+            }
+        }
+
+        // CRUD NGỮ PHÁP
+        function saveGrammarItem() {
+            let index = parseInt(document.getElementById('editGrammarIndex').value);
+            let level = document.getElementById('addGrammarHskLevel').value;
+            let title = document.getElementById('addGTitle').value.trim();
+            let desc = document.getElementById('addGDesc').value.trim();
+            let example = document.getElementById('addGEx').value.trim();
+
+            if (!title) {
+                alert("Vui lòng nhập tiêu đề cấu trúc ngữ pháp!");
+                return;
+            }
+
+            let newItem = { level, title, desc, example };
+            if (index === -1) {
+                grammarData.push(newItem);
+            } else {
+                grammarData[index] = newItem;
+                resetGrammarForm();
+            }
+
+            document.getElementById('addGTitle').value = '';
+            document.getElementById('addGDesc').value = '';
+            document.getElementById('addGEx').value = '';
+            renderAdminGrammarList();
+            alert("Đã lưu ngữ pháp thành công!");
+        }
+
+        function renderAdminGrammarList() {
+            let container = document.getElementById('adminGrammarListContainer');
+            container.innerHTML = '';
+            if (grammarData.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">Chưa có ngữ pháp nào.</p>';
+                return;
+            }
+            grammarData.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <span class="font-bold text-emerald-700">[HSK ${item.level}]</span> 
+                            <span class="font-bold text-sm mx-1">${item.title}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editGrammar(${idx})" class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-amber-200 transition">Sửa</button>
+                            <button onclick="deleteGrammar(${idx})" class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-rose-200 transition">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function editGrammar(idx) {
+            let item = grammarData[idx];
+            document.getElementById('editGrammarIndex').value = idx;
+            document.getElementById('addGrammarHskLevel').value = item.level;
+            document.getElementById('addGTitle').value = item.title;
+            document.getElementById('addGDesc').value = item.desc;
+            document.getElementById('addGEx').value = item.example;
+            document.getElementById('cancelGrammarEditBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetGrammarForm() {
+            document.getElementById('editGrammarIndex').value = '-1';
+            document.getElementById('addGTitle').value = '';
+            document.getElementById('addGDesc').value = '';
+            document.getElementById('addGEx').value = '';
+            document.getElementById('cancelGrammarEditBtn').classList.add('hidden');
+        }
+
+        function deleteGrammar(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa ngữ pháp này không?")) {
+                grammarData.splice(idx, 1);
+                renderAdminGrammarList();
+            }
+        }
+
+        // CRUD BÀI TẬP
+        function saveExerciseItem() {
+            let level = document.getElementById('addHskLevel').value;
+            let type = document.getElementById('addExType').value;
+            let title = document.getElementById('addExTitle').value.trim();
+            let rawContent = document.getElementById('addExContent10').value.trim();
+            let rawAnswers = document.getElementById('addExAnswers10').value.trim();
+            let hint = document.getElementById('addExHint').value.trim();
+
+            if (!title || !rawContent || !rawAnswers) {
+                alert("Vui lòng điền đầy đủ tiêu đề, nội dung 10 câu và đáp án!");
+                return;
+            }
+
+            let lines = rawContent.split('\n').map(s => s.trim()).filter(Boolean);
+            let answers = rawAnswers.split('\n').map(s => s.trim()).filter(Boolean);
+
+            if (!exerciseData[level]) {
+                exerciseData[level] = {};
+            }
+
+            exerciseData[level][type] = { title, lines, answers, hint };
+            alert("Đã lưu bài tập thành công!");
+            renderAdminExerciseList();
+        }
+
+        function renderAdminExerciseList() {
+            let container = document.getElementById('adminExerciseListContainer');
+            container.innerHTML = '';
+            let count = 0;
+            for (let lvl in exerciseData) {
+                for (let type in exerciseData[lvl]) {
+                    count++;
+                    let ex = exerciseData[lvl][type];
+                    container.innerHTML += `
+                        <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                            <div>
+                                <span class="font-bold text-emerald-700">[HSK ${lvl}] - [${type.toUpperCase()}]</span> 
+                                <span class="font-bold text-sm mx-1">${ex.title}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="loadExerciseToEdit('${lvl}', '${type}')" class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-amber-200 transition">Sửa</button>
+                                <button onclick="deleteExercise('${lvl}', '${type}')" class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-rose-200 transition">Xóa</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            if (count === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">Chưa có bài tập nào.</p>';
+            }
+        }
+
+        function loadExerciseToEdit(lvl, type) {
+            let ex = exerciseData[lvl][type];
+            document.getElementById('addHskLevel').value = lvl;
+            document.getElementById('addExType').value = type;
+            document.getElementById('addExTitle').value = ex.title;
+            document.getElementById('addExContent10').value = ex.lines.join('\n');
+            document.getElementById('addExAnswers10').value = ex.answers.join('\n');
+            document.getElementById('addExHint').value = ex.hint || '';
+            document.getElementById('cancelExEditBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetExerciseForm() {
+            document.getElementById('addExTitle').value = '';
+            document.getElementById('addExContent10').value = '';
+            document.getElementById('addExAnswers10').value = '';
+            document.getElementById('addExHint').value = '';
+            document.getElementById('cancelExEditBtn').classList.add('hidden');
+        }
+
+        function deleteExercise(lvl, type) {
+            if (confirm("Bạn có chắc chắn muốn xóa bộ bài tập này không?")) {
+                delete exerciseData[lvl][type];
+                renderAdminExerciseList();
+            }
+        }
+
+        // CRUD KIỂM TRA TỪ (QUIZ)
+        function saveQuizItem() {
+            let index = parseInt(document.getElementById('editQuizIndex').value);
+            let level = document.getElementById('addQuizHskLevel').value;
+            let type = document.getElementById('addQuizType').value.trim();
+            let meaning = document.getElementById('addQuizMeaning').value.trim();
+            let word = document.getElementById('addQuizWord').value.trim();
+
+            if (!meaning || !word) {
+                alert("Vui lòng nhập đầy đủ Nghĩa tiếng Việt và Đáp án (Hán tự)!");
+                return;
+            }
+
+            let newItem = { level, word, meaning, type };
+            if (index === -1) {
+                quizData.push(newItem);
+            } else {
+                quizData[index] = newItem;
+                resetQuizForm();
+            }
+
+            document.getElementById('addQuizMeaning').value = '';
+            document.getElementById('addQuizWord').value = '';
+            document.getElementById('addQuizType').value = '';
+            renderAdminQuizList();
+            alert("Đã lưu từ kiểm tra thành công!");
+        }
+
+        function renderAdminQuizList() {
+            let container = document.getElementById('adminQuizListContainer');
+            container.innerHTML = '';
+            if (quizData.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">Chưa có từ kiểm tra nào.</p>';
+                return;
+            }
+            quizData.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <span class="font-bold text-emerald-700">[HSK ${item.level}]</span> 
+                            <span class="font-semibold mx-1">Nghĩa: ${item.meaning}</span> 
+                            <span class="text-slate-500">[${item.type}]</span> ➡ 
+                            <span class="font-bold text-emerald-600 text-sm ml-1">${item.word}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editQuiz(${idx})" class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-amber-200 transition">Sửa</button>
+                            <button onclick="deleteQuiz(${idx})" class="bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-semibold hover:bg-rose-200 transition">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function editQuiz(idx) {
+            let item = quizData[idx];
+            document.getElementById('editQuizIndex').value = idx;
+            document.getElementById('addQuizHskLevel').value = item.level;
+            document.getElementById('addQuizType').value = item.type || '';
+            document.getElementById('addQuizMeaning').value = item.meaning;
+            document.getElementById('addQuizWord').value = item.word;
+            document.getElementById('cancelQuizEditBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetQuizForm() {
+            document.getElementById('editQuizIndex').value = '-1';
+            document.getElementById('addQuizMeaning').value = '';
+            document.getElementById('addQuizWord').value = '';
+            document.getElementById('addQuizType').value = '';
+            document.getElementById('cancelQuizEditBtn').classList.add('hidden');
+        }
+
+        function deleteQuiz(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa từ kiểm tra này không?")) {
+                quizData.splice(idx, 1);
+                renderAdminQuizList();
+            }
+        }
+
+        // ĐIỀU HƯỚNG GIAO DIỆN HỌC TẬP
+        function goHome() {
+            if (isEditable) return;
+            document.getElementById('homeSection').classList.remove('hidden');
+            document.getElementById('levelMenuSection').classList.add('hidden');
+            document.getElementById('exerciseTypeMenuSection').classList.add('hidden');
+            document.getElementById('contentDetailSection').classList.add('hidden');
+            document.getElementById('quizPlaySection').classList.add('hidden');
+            document.getElementById('masterAdminPanel').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBack() {
+            if (document.getElementById('quizPlaySection').classList.contains('hidden') === false ||
+                document.getElementById('contentDetailSection').classList.contains('hidden') === false) {
+                if (currentSectionType === 'exercise') {
+                    document.getElementById('contentDetailSection').classList.add('hidden');
+                    document.getElementById('exerciseTypeMenuSection').classList.remove('hidden');
+                } else if (currentSectionType === 'quiz') {
+                    document.getElementById('quizPlaySection').classList.add('hidden');
+                    document.getElementById('levelMenuSection').classList.remove('hidden');
+                } else {
+                    document.getElementById('contentDetailSection').classList.add('hidden');
+                    document.getElementById('levelMenuSection').classList.remove('hidden');
+                }
+            } else if (document.getElementById('exerciseTypeMenuSection').classList.contains('hidden') === false) {
+                document.getElementById('exerciseTypeMenuSection').classList.add('hidden');
+                document.getElementById('levelMenuSection').classList.remove('hidden');
+            } else if (document.getElementById('levelMenuSection').classList.contains('hidden') === false) {
+                goHome();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openLevelMenu(type) {
+            currentSectionType = type;
+            document.getElementById('homeSection').classList.add('hidden');
+            document.getElementById('levelMenuSection').classList.remove('hidden');
+
+            let titleMap = {
+                'vocab': 'Chọn Cấp Độ HSK - Từ Mới',
+                'grammar': 'Chọn Cấp Độ HSK - Ngữ Pháp',
+                'exercise': 'Chọn Cấp Độ HSK - Bài Tập',
+                'quiz': 'Chọn Cấp Độ HSK - Kiểm Tra Từ'
+            };
+            document.getElementById('levelMenuTitle').innerText = titleMap[type] || 'Chọn Cấp Độ HSK';
+
+            let levels = ['1', '2', '3', '4', '5', '6', '7-9'];
+            let container = document.getElementById('levelGridContainer');
+            container.innerHTML = '';
+
+            levels.forEach(lvl => {
+                container.innerHTML += `
+                    <div onclick="selectLevel('${lvl}')" class="bg-white/95 backdrop-blur p-5 rounded-2xl shadow-lg hover:shadow-xl cursor-pointer border border-emerald-100 hover:border-emerald-500 text-center transition transform hover:-translate-y-1">
+                        <div class="text-2xl font-black text-emerald-700 mb-1">HSK ${lvl}</div>
+                        <p class="text-xs text-slate-500">Xem nội dung cấp độ ${lvl}</p>
+                    </div>
+                `;
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectLevel(lvl) {
+            currentSelectedLevel = lvl;
+            if (currentSectionType === 'exercise') {
+                document.getElementById('levelMenuSection').classList.add('hidden');
+                document.getElementById('exerciseTypeMenuSection').classList.remove('hidden');
+                document.getElementById('exTypeMenuTitle').innerText = `Bài Tập HSK ${lvl}`;
+            } else if (currentSectionType === 'quiz') {
+                startQuizSession(lvl);
+            } else {
+                showContentDetail(currentSectionType, lvl);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openExerciseList(subtype) {
+            currentExSubtype = subtype;
+            document.getElementById('exerciseTypeMenuSection').classList.add('hidden');
+            showExerciseContent(currentSelectedLevel, subtype);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showContentDetail(type, lvl) {
+            document.getElementById('levelMenuSection').classList.add('hidden');
+            document.getElementById('contentDetailSection').classList.remove('hidden');
+            
+            let container = document.getElementById('contentDetailContainer');
+            container.innerHTML = '';
+
+            if (type === 'vocab') {
+                document.getElementById('contentDetailTitle').innerText = `Danh Sách Từ Mới HSK ${lvl}`;
+                let filtered = vocabData.filter(v => v.level === lvl);
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="bg-white/95 p-6 rounded-2xl text-center text-slate-500">Chưa có từ vựng nào cho cấp độ HSK ${lvl}.</div>`;
+                    return;
+                }
+                let html = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">';
+                filtered.forEach(v => {
+                    html += `
+                        <div class="bg-white/95 backdrop-blur p-5 rounded-2xl shadow-md border border-emerald-100 flex justify-between items-center">
+                            <div>
+                                <div class="text-2xl font-black text-emerald-700 mb-1">${v.word} <span class="text-sm font-normal text-slate-500">[${v.pinyin}]</span></div>
+                                <div class="text-sm font-semibold text-slate-700">${v.meaning}</div>
+                            </div>
+                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">${v.type || 'Từ vựng'}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } else if (type === 'grammar') {
+                document.getElementById('contentDetailTitle').innerText = `Ngữ Pháp HSK ${lvl}`;
+                let filtered = grammarData.filter(g => g.level === lvl);
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="bg-white/95 p-6 rounded-2xl text-center text-slate-500">Chưa có ngữ pháp nào cho cấp độ HSK ${lvl}.</div>`;
+                    return;
+                }
+                let html = '';
+                filtered.forEach(g => {
+                    html += `
+                        <div class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-md border border-emerald-100 space-y-3">
+                            <h3 class="text-lg font-bold text-emerald-700">${g.title}</h3>
+                            <p class="text-sm text-slate-600 whitespace-pre-line">${g.desc}</p>
+                            <div class="bg-emerald-50 p-3.5 rounded-xl border border-emerald-100 text-xs font-medium text-emerald-900">
+                                <strong>Ví dụ:</strong> ${g.example}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        }
+
+        function showExerciseContent(lvl, subtype) {
+            document.getElementById('contentDetailSection').classList.remove('hidden');
+            let container = document.getElementById('contentDetailContainer');
+            container.innerHTML = '';
+
+            let exObj = exerciseData[lvl] && exerciseData[lvl][subtype];
+            if (!exObj) {
+                container.innerHTML = `<div class="bg-white/95 p-6 rounded-2xl text-center text-slate-500">Chưa có bài tập cho cấp độ HSK ${lvl} này. Vui lòng thêm trong chế độ chỉnh sửa.</div>`;
+                return;
+            }
+
+            document.getElementById('contentDetailTitle').innerText = exObj.title;
+
+            let html = `
+                <div class="bg-white/95 backdrop-blur p-6 rounded-2xl shadow-xl border border-emerald-100 space-y-6">
+                    ${exObj.hint ? `<div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-900"><strong>💡 Gợi ý:</strong> ${exObj.hint}</div>` : ''}
+                    <div class="space-y-4" id="exerciseQuestionsList">
+            `;
+
+            exObj.lines.forEach((line, idx) => {
+                html += `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="text-sm font-semibold text-slate-800">${line}</div>
+                        <input type="text" id="exAnswerInput_${idx}" placeholder="Nhập câu trả lời của bạn..." class="w-full border rounded-xl px-3.5 py-2 text-sm bg-white focus:outline-none focus:border-emerald-500">
+                        <div id="exResult_${idx}" class="text-xs font-semibold hidden"></div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                    <button onclick="gradeExercise('${lvl}', '${subtype}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm transition shadow-md">Nộp Bài & Kiểm Tra</button>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function gradeExercise(lvl, subtype) {
+            let exObj = exerciseData[lvl][subtype];
+            let correctCount = 0;
+            exObj.lines.forEach((line, idx) => {
+                let userAns = document.getElementById(`exAnswerInput_${idx}`).value.trim().toLowerCase();
+                let rightAns = exObj.answers[idx].trim().toLowerCase();
+                let resDiv = document.getElementById(`exResult_${idx}`);
+                resDiv.classList.remove('hidden');
+
+                if (userAns === rightAns) {
+                    correctCount++;
+                    resDiv.className = "text-xs font-semibold text-emerald-600";
+                    resDiv.innerText = "✔ Chính xác!";
+                } else {
+                    resDiv.className = "text-xs font-semibold text-rose-600";
+                    resDiv.innerText = `✘ Chưa chính xác. Đáp án gợi ý: ${exObj.answers[idx]}`;
+                }
+            });
+            alert(`Bạn đã trả lời đúng ${correctCount}/${exObj.lines.length} câu!`);
+        }
+
+        // LOGIC KIỂM TRA TỪ (QUIZ) - ĐÃ CẬP NHẬT HIỂN THỊ THÊM TỪ LOẠI
+        let currentQuizList = [];
+        let currentQuizIndex = 0;
+        let quizScoreCount = 0;
+
+        function startQuizSession(lvl) {
+            document.getElementById('levelMenuSection').classList.add('hidden');
+            document.getElementById('quizPlaySection').classList.remove('hidden');
+
+            currentQuizList = quizData.filter(q => q.level === lvl);
+            if (currentQuizList.length === 0) {
+                alert(`Chưa có từ kiểm tra nào cho HSK ${lvl}!`);
+                document.getElementById('quizPlaySection').classList.add('hidden');
+                document.getElementById('levelMenuSection').classList.remove('hidden');
+                return;
+            }
+
+            // Trộn ngẫu nhiên câu hỏi
+            currentQuizList.sort(() => Math.random() - 0.5);
+            currentQuizIndex = 0;
+            quizScoreCount = 0;
+            document.getElementById('quizScore').innerText = `Điểm đúng: 0`;
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            if (currentQuizIndex >= currentQuizList.length) {
+                alert(`Bạn đã hoàn thành toàn bộ bài kiểm tra từ! Tổng điểm đúng: ${quizScoreCount}/${currentQuizList.length}`);
+                goBack();
+                return;
+            }
+            let item = currentQuizList[currentQuizIndex];
+            // Hiển thị cả nghĩa tiếng Việt và từ loại
+            let typeText = item.type ? ` [${item.type}]` : '';
+            document.getElementById('quizMeaning').innerText = `${item.meaning}${typeText}`;
+            let inputField = document.getElementById('quizInput');
+            inputField.value = '';
+            inputField.style.borderColor = '#e2e8f0';
+            inputField.style.backgroundColor = '#ffffff';
+            inputField.focus();
+        }
+
+        function checkQuizInput(input) {
+            let item = currentQuizList[currentQuizIndex];
+            let val = input.value.trim();
+            if (val === item.word) {
+                input.style.borderColor = '#10b981';
+                input.style.backgroundColor = '#ecfdf5';
+                quizScoreCount++;
+                document.getElementById('quizScore').innerText = `Điểm đúng: ${quizScoreCount}`;
+                setTimeout(() => {
+                    currentQuizIndex++;
+                    loadQuizQuestion();
+                }, 500);
+            }
+        }
+
+        function nextQuiz() {
+            currentQuizIndex++;
+            loadQuizQuestion();
+        }
+    </script>
+</body>
+</html>
